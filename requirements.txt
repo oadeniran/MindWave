@@ -27,3 +27,4 @@ yagmail[all]
 azure-storage-blob
 streamlit
 uuid
+streamlit_chat
