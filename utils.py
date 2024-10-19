@@ -1,10 +1,11 @@
-from db import usersCollection, messageCollection, extractedDataCollection
+from db import usersCollection, messageCollection, extractedDataCollection, reportsCollection
 from datetime import datetime
-from core import chatActions, mental_prediction
+from core import chatActions, mental_prediction, big5_personality
 import pandas as pd
 
 POSSIBLE_SELECTIONS = {
     "Mental Health": mental_prediction,
+    "Personality Test": big5_personality
 }
 
 VERBOSITY_LEVEL = {
@@ -16,7 +17,7 @@ VERBOSITY_LEVEL = {
 def dict_to_string(d, explanations=None):
     #i = 1
     result = []
-    if explanations:
+    if explanations and len(explanations) > 0:
         for key, value in d.items():
             if isinstance(value, dict):
                 value_str = ', '.join(f'{k}: {v}' for k, v in value.items())
@@ -52,6 +53,12 @@ def get_output_format(selection):
     output_format = dict_to_string(POSSIBLE_SELECTIONS[selection].OUTPUT_FORMAT)
     return output_format
 
+def get_system_template(selection,output_format, required_info_s ,verbosity):
+
+    sys_template = POSSIBLE_SELECTIONS[selection].get_sys_template(output_format, required_info_s, verbosity)
+
+    return sys_template
+
 def convert_dict_to_df(d):
   df = pd.DataFrame(columns=d.keys())
   df.loc[0] = d.values()
@@ -76,5 +83,5 @@ def add_report_to_db(uid, session_id:str, report:str):
         "report":report,
         "date":datetime.now(),
     }
-    extractedDataCollection.insert_one(document)
+    reportsCollection.insert_one(document)
 

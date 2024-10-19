@@ -26,7 +26,7 @@ def MindWaveLab():
             st.spinner("Generating Report")
             df_d = utils.convert_dict_to_df(st.session_state['data_extracted'])
             prediction = utils.get_prediction(st.session_state["test_config"]["test_option"], df_d.values)
-            report = chatbot.MindwaveReportBot(uid = st.session_state["test_config"]["uid"], session_id = st.session_state["test_config"]["session_id"], prediction = prediction, required_info = st.session_state["test_config"]["input_info"])
+            report = chatbot.MindwaveReportBot(uid = st.session_state["test_config"]["uid"], session_id = st.session_state["test_config"]["session_id"], prediction = prediction, required_info = st.session_state["test_config"]["input_info"], curr_test=st.session_state["test_config"]["test_option"])
             st.session_state["assessment_report"] = report
             utils.add_report_to_db(st.session_state["test_config"]["uid"], st.session_state["test_config"]["session_id"], report)
             st.success("Assessment Report Generated")
@@ -49,14 +49,14 @@ def MindWaveLab():
                     message(st.session_state["generated"][i], key=str(i))
 
         if len(st.session_state['generated']) == 1:
-            output = chatbot.MindWavebot(uid = st.session_state["test_config"]["uid"], session_id = st.session_state["test_config"]["session_id"], message = "", output_format = st.session_state["test_config"]["output_info"], required_info = st.session_state["test_config"]["input_info"], verbosity=st.session_state["test_config"]["verbosity"])
+            output = chatbot.MindWavebot(uid = st.session_state["test_config"]["uid"], session_id = st.session_state["test_config"]["session_id"], message = "", system_template=st.session_state["test_config"]["system_template"])
             st.session_state["generated"].append(output["message"])
             st.session_state["input_message_key"] = str(random.random())
             st.rerun()
         else:
             user_input = st.text_input("Type in your response", key=st.session_state["input_message_key"])
             if st.button("Send") and user_input != "":
-                output = chatbot.MindWavebot(uid = st.session_state["test_config"]["uid"], session_id = st.session_state["test_config"]["session_id"], message = user_input, output_format = st.session_state["test_config"]["output_info"], required_info = st.session_state["test_config"]["input_info"], verbosity=st.session_state["test_config"]["verbosity"])
+                output = chatbot.MindWavebot(uid = st.session_state["test_config"]["uid"], session_id = st.session_state["test_config"]["session_id"], message = user_input, system_template=st.session_state["test_config"]["system_template"])
                 st.session_state["past"].append(user_input)
                 print("past", st.session_state["past"])
                 st.session_state["generated"].append(output["message"])

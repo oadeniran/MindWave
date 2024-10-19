@@ -64,13 +64,16 @@ def test_configurations():
         if "uid" not in st.session_state:
             st.session_state["uid"] = ""
         st.session_state["test_option"] = test_option
+        input_info = utils.get_input_format(test_option)
+        output_info = utils.get_output_format(test_option)
         st.session_state["test_config"] = {
             "uid" : st.session_state["uid"],
             "session_id" : str(uuid.uuid4()),
             "test_option" : test_option,
             "verbosity" : verbosity,
-            "input_info" : utils.get_input_format(test_option),
-            "output_info" : utils.get_output_format(test_option)
+            "input_info" : input_info,
+            "output_info" : output_info,
+            "system_template" : utils.get_system_template(test_option,output_info, input_info, verbosity)
         }
         st.info("Great!!! Let's get started")
         st.switch_page("pages/Assesment.py")

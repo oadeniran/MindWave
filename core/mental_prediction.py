@@ -1,16 +1,15 @@
 from config import mentalHealthModel
 import os
-from langchain_core.messages import  HumanMessage
-from langchain_openai import ChatOpenAI
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    MessagesPlaceholder,
-)
 import re
 import json
 from openai import OpenAI
 from datetime import datetime
+from utils import VERBOSITY_LEVEL
+from datetime import datetime
+
+def get_todays_date_formatted():
+    return datetime.today().strftime('%Y-%m-%d')
+
 
 MAPPINGS = {
     'Admit Mistakes': {'NO': 0, 'YES': 1},
@@ -79,11 +78,34 @@ OUTPUT_FORMAT = {
 
 TARGET_MAPPING = {0: 'Bipolar Type-1', 1: 'Bipolar Type-2', 2: 'Depression', 3: 'Normal'}
 
-cols_to_hc = ['Sadness', 'Euphoric', 'Exhausted', 'Sleep dissorder']
+def get_sys_template(output_format, required_info_s, verbosity):
 
-cols_to_extract_values = ['Sexual Activity', 'Concentration', 'Optimisim']
+    sys_template = f"""
 
-hc_mappings = {'Most-Often': 10, 'Seldom':1, 'Sometimes':4, 'Usually': 6}
+    You are a psychology expert and you are very good at evaluating the mental profile or psychological state of a person. Some information needs to be extracted and you can come up with scenarios and real world situsations where the user's response can be used to score the user for that information.
+    You Love your job and you are very good at it. You are also a very very jovial person and you are good with words. A little information for you though, the current year is 2024 and today's date is {get_todays_date_formatted()}.
+    You are to extract the following information from the user:
+
+    {required_info_s}
+
+    However, you do not want to explicitly ask the user for this information. You want to extract this information from the user's responses to your questions. You should ask questions that will help you deduce the information you need.
+
+    When there is no user input, you should prompt the user for the information you need to extract.
+
+    Your verbosity level is set to {verbosity} and that means you {VERBOSITY_LEVEL[verbosity]}.
+
+    ON NO ACCOUNT SHOULD YOU LEAK YOUR GOAL OR MAKE ANY MENTION OF DICTIONARY OR JSON OR ANYTHING THAT WILL GIVE AWAY THE FACT THAT YOU ARE AN AI.
+
+    While collecting information, end the message with excatly this text: CURRENT_STAGE: <Ind> where Ind is the index of the input being collected to indicate that you are currently collecting the information for that stage.
+
+    When you have all the information ready, return the dictionary and DO NOT add any preambles or postambles or summary to the dictionary OUTPUT and Always output a dictionary in this format (field name as key and score as value) ONLY WHEN YOU HAVE ALL THE INFORMATION {output_format}.DO NOT add any preambles or postambles or summary to the dictionary OUTPUT. 
+
+    As long as you can deduce that all information is collected from chat history, return the dictionary ONLY regardless of input from user.
+    """
+
+    return sys_template
+
+
 
 def get_prediction(data):
   predicted_proba = mentalHealthModel.predict_proba(data)
