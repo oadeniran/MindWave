@@ -48,7 +48,7 @@ def load_model(api_key, retriever, chat_history):
     "When responding, acknowledge the user's feelings and offer thoughtful, emotionally supportive responses. "
     "If you feel the context is unclear, ask gentle, open-ended questions to better understand the user. "
     "Keep your tone empathetic and aim to help the user feel heard and understood."
-    "When there is no message from user and chat history, you can start the conversation by asking something interesting based on context or generally."
+    "When there is no message from the user and no chat history, Greet the user and wwelcome the user to the session and ask what is on their mind."
     "\n\n"
     "{context}"
     "\n\n"
