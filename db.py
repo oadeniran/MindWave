@@ -10,5 +10,6 @@ usersCollection = db["users"]
 messageCollection = db["messages"]
 extractedDataCollection = db["extractedData"]
 reportsCollection = db["reports"]
+rantMessagesCollection = db["rantMessages"]
 
 # Define DB actions

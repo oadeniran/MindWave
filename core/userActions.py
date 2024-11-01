@@ -1,6 +1,6 @@
-from db import usersCollection
+from db import usersCollection, reportsCollection
 import json
-
+from bson import ObjectId
     
 def signup(signUp_det):
     try:
@@ -50,3 +50,38 @@ def login(login_det):
                     "message" : "User not found",
                     "status_code" : 404
                     }
+
+def add_user_session(uid, session_id, session_type, session_info):
+    try:
+        usersCollection.update_one({"_id":ObjectId(uid)}, {"$push": {"sessions": {"session_id": session_id, "session_type": session_type, "session_info": session_info}}})
+    except:
+        return {
+                    "message" : "Error with DB",
+                    "status_code" : 404
+                    }
+    return {
+    "message" : "Session added successfully",
+    "status_code" : 200}
+
+def get_all_user_sessions(uid):
+    try:
+        print(uid)
+        users = usersCollection.find({"_id":ObjectId(uid)})
+    except:
+        return {
+                    "message" : "Error with DB",
+                    "status_code" : 404
+                    }
+    #print(list(users))
+    return list(users)[0]["sessions"]
+
+def get_user_reports(uid):
+    try:
+        reports = reportsCollection.find({"uid":uid})
+    except:
+        return {
+                    "message" : "Error with DB",
+                    "status_code" : 404
+                    }
+    print(list(reports))
+    return {report['session_id']: (report['session_type'], report['report']) for report in reports}

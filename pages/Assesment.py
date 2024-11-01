@@ -18,7 +18,7 @@ def MindWaveLab():
         st.info("Seems you have completed your assessment, please proceed to the assessment report. To start a new assessment, please click on the button below")
         if st.button("Start New Assessment"):
             st.session_state.clear()
-            st.switch_page("main.py")
+            st.switch_page("Home.py")
     elif 'data_extracted' in st.session_state:
         st.success("Assessment Completed")
         st.write("Please click on the button below to generate your assessment report")
@@ -26,10 +26,11 @@ def MindWaveLab():
             st.spinner("Generating Report")
             df_d = utils.convert_dict_to_df(st.session_state['data_extracted'])
             prediction = utils.get_prediction(st.session_state["test_config"]["test_option"], df_d.values)
+            print("prediction===", prediction)
             report = chatbot.MindwaveReportBot(uid = st.session_state["test_config"]["uid"], session_id = st.session_state["test_config"]["session_id"], prediction = prediction, required_info = st.session_state["test_config"]["input_info"], curr_test=st.session_state["test_config"]["test_option"])
             st.session_state["assessment_report"] = report
             utils.add_report_to_db(st.session_state["test_config"]["uid"], st.session_state["test_config"]["session_id"], report)
-            st.success("Assessment Report Generated")
+            st.success("Assessment Report Generated. Now Click in Assessment Result in sidebar to view results")
     else:
         if "past" not in st.session_state:
             #message("Hiiiiii!!, MindWave Here, Let's start shall we")

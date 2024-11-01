@@ -102,7 +102,7 @@ def MindWavebot(uid, session_id:str, message:str, system_template, verbosity=1):
         [sys_message, MessagesPlaceholder("chat_history"), ("human", "{input}")]
     )
 
-    print("Chat prompts:", chat_prompts)
+    #print("Chat prompts:", chat_prompts)
     
     chain = chat_prompts | LLM
     
