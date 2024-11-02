@@ -9,11 +9,11 @@ dnspython==2.2.1
 certifi==2019.9.11
 gunicorn
 langchain==0.3.0
-langchain-mongodb
+langchain-mongodb==0.2.0
 langchain-core 
 langchain-openai 
 langchain-community
-openai==1.7.2
+openai
 python-dotenv==1.0.0
 pinecone-client==2.2.4
 chromadb
