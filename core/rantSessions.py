@@ -19,13 +19,13 @@ def get_chat_history_for_ai(uid, session_id):
 
         return new_messages
 
-def save_session_embeddings(text, user_id, api_key, embeddings_path):
+def save_session_embeddings(text, user_id, api_key):
     docs = rag.create_docs(text)
-    rag.create_embeddings_and_retriever(docs, api_key, user_id, embeddings_path)
+    rag.create_update_embeddings_for_user(docs, api_key, user_id)
     return "saved"
 
-def create_retriever(embeddings_path, api_key):
-    return rag.create_retriever(embeddings_path, api_key)
+def create_retriever(user_id, api_key):
+    return rag.create_retriever(user_id, api_key)
 
 def load_model(retriever, api_key, uid, session_id):
     return rag.load_model(api_key, retriever, get_chat_history_for_ai(uid, session_id))
@@ -38,8 +38,8 @@ def letsTalk(message, model, uid, session_id):
     add_chat_to_db(uid, session_id, "system", answer, {}, rant=True)
     return answer
 
-def talkToMe(uid, session_id, message, api_key, embeddings_path):
-    retriever = create_retriever(embeddings_path, api_key)
+def talkToMe(uid, session_id, message, api_key):
+    retriever = create_retriever(uid, api_key)
     model = load_model(retriever, api_key, uid, session_id)
     return letsTalk(message, model, uid, session_id)
     

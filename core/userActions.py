@@ -75,6 +75,28 @@ def get_all_user_sessions(uid):
     #print(list(users))
     return list(users)[0]["sessions"]
 
+def add_doc_ids(uid, ids):
+    try:
+        print(uid)
+        user = usersCollection.find({"_id":ObjectId(uid)})
+    except:
+        return {
+                    "message" : "Error with DB",
+                    "status_code" : 404
+                    }
+    #print(list(users))
+    new_ids = user["docIds"] + ids
+    user["docIds"] = new_ids
+
+    try:
+        usersCollection.find_one_and_update({"_id":ObjectId(uid)}, {"docIds" : new_ids})
+    except:
+        return {
+                    "message" : "Error with DB",
+                    "status_code" : 404
+                    }
+    return "updated"
+
 def get_user_reports(uid):
     try:
         reports = reportsCollection.find({"uid":uid})

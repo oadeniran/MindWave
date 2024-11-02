@@ -22,8 +22,6 @@ else:
         st.session_state['session_id'] = str(uuid.uuid4())
         userActions.add_user_session(st.session_state["uid"], st.session_state["session_id"], "Talk_session",{})
 
-    PATH_TO_LOAD = f"{EMBED_PATH}/{st.session_state['uid']}"
-
     if 'rant_session' not in st.session_state:
         st.session_state['rant_session'] = {
             'past': [],
@@ -40,14 +38,14 @@ else:
                 message(st.session_state['rant_session']["generated"][i], key=str(i))
 
     if len(st.session_state['rant_session']['generated']) < 1:
-            output = rantSessions.talkToMe(st.session_state['uid'], st.session_state['session_id'], "", OPENAI_API_KEY, PATH_TO_LOAD)
+            output = rantSessions.talkToMe(st.session_state['uid'], st.session_state['session_id'], "", OPENAI_API_KEY)
             st.session_state['rant_session']["generated"].append(output)
             st.session_state["input_message_key"] = str(random.random())
             st.rerun()
     else:
         user_input = st.text_input("Type in your message", key=st.session_state["input_message_key"])
         if st.button("Send") and user_input != "":
-            output = rantSessions.talkToMe(st.session_state['uid'], st.session_state['session_id'], user_input, OPENAI_API_KEY, PATH_TO_LOAD)
+            output = rantSessions.talkToMe(st.session_state['uid'], st.session_state['session_id'], user_input, OPENAI_API_KEY)
             st.session_state['rant_session']["past"].append(user_input)
             print("past", st.session_state['rant_session']["past"])
             st.session_state['rant_session']["generated"].append(output)
