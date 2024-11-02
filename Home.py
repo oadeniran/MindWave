@@ -29,7 +29,7 @@ def auth():
 
     if selection == "SignIn":
         st.info("Please enter your username and password to login.")
-        email = st.text_input("Email")
+        email = st.text_input("Email", help="Please enter your email")
         st.write("Please enter your password")
         password = st.text_input("Password", type="password")
         if st.button("Login"):

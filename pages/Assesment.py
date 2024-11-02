@@ -1,14 +1,17 @@
 import streamlit as st
-import os
-import re
-import random
-import traceback
-import streamlit as st
-from dotenv import load_dotenv
-from streamlit_chat import message
-import chatbot
-from core import mental_prediction, chatActions
-import utils
+
+@st.cache_resource
+def get_all_imports():
+    import random
+    from streamlit_chat import message
+    import chatbot
+    import utils
+    from config import OPENAI_API_KEY
+    return random, message, chatbot, utils, OPENAI_API_KEY
+
+random, message, chatbot, utils, OPENAI_API_KEY = get_all_imports()
+
+
 
 def MindWaveLab():
     output = None
@@ -25,11 +28,11 @@ def MindWaveLab():
         if st.button("Generate Report"):
             st.spinner("Generating Report")
             df_d = utils.convert_dict_to_df(st.session_state['data_extracted'])
-            prediction = utils.get_prediction(st.session_state["test_config"]["test_option"], df_d.values)
+            prediction = utils.get_prediction(st.session_state["test_config"]["test_option"], df_d)
             print("prediction===", prediction)
             report = chatbot.MindwaveReportBot(uid = st.session_state["test_config"]["uid"], session_id = st.session_state["test_config"]["session_id"], prediction = prediction, required_info = st.session_state["test_config"]["input_info"], curr_test=st.session_state["test_config"]["test_option"])
             st.session_state["assessment_report"] = report
-            utils.add_report_to_db(st.session_state["test_config"]["uid"], st.session_state["test_config"]["session_id"], report)
+            utils.add_report_to_db(st.session_state["test_config"]["uid"],st.session_state["test_config"]["test_option"], st.session_state["test_config"]["session_id"], report)
             st.success("Assessment Report Generated. Now Click in Assessment Result in sidebar to view results")
     else:
         if "past" not in st.session_state:
@@ -81,6 +84,8 @@ def assessment_report():
         st.title("Assessment Report")
         st.write("This is your assessment report")
         st.write(st.session_state['assessment_report'])
+
+
 
 st.sidebar.title("Navigation")
 selection = st.sidebar.radio("Go to", ["MindWaveLab","Assesment Result"])

@@ -108,6 +108,6 @@ def get_sys_template(output_format, required_info_s, verbosity):
 
 
 def get_prediction(data):
-  predicted_proba = mentalHealthModel.predict_proba(data)
-  predicted_class = mentalHealthModel.predict(data)
+  predicted_proba = mentalHealthModel.predict_proba(data.values)
+  predicted_class = mentalHealthModel.predict(data.values)
   return f"User is predicted to be {TARGET_MAPPING[predicted_class[0]]} with a probability of {max(predicted_proba[0])}", 

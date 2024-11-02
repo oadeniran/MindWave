@@ -11,5 +11,6 @@ messageCollection = db["messages"]
 extractedDataCollection = db["extractedData"]
 reportsCollection = db["reports"]
 rantMessagesCollection = db["rantMessages"]
+ragEmbeddingsCollection = db["ragEmbeddings"]
 
 # Define DB actions

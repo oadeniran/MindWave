@@ -8,26 +8,29 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_mongodb import MongoDBAtlasVectorSearch
-from db import db
-from core.userActions import add_doc_ids
+from db import ragEmbeddingsCollection,db
 
 ATLAS_VECTOR_SEARCH_INDEX_NAME = "langchain-index-vectorstores"
 
-
-def create_docs(text):
+def create_docs(reports):
     docs = []
-    for i, text in enumerate(text):
-        docs.append(Document(text, metadata={"id": i}))
+    for session_id, report_details in reports.items():
+        doc = Document(
+            page_content=report_details[1],
+            metadata={"session_id": session_id, "session_type": report_details[0]}
+        )
+        docs.append(doc)
     return docs
 
 def create_update_embeddings_for_user(docs, api_key, user_id):
 
     userRagEmbeddingsCollection = db[user_id]
+    ids = [user_id + f"_{i}" for i in range(len(docs))]
     
     # Split documents
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    splits = text_splitter.split_documents(docs)
-    ids = [user_id + f"_{i}" for i in range(len(splits))]
+    #text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    #splits = text_splitter.split_documents(docs)
+    #ids = [user_id + f"_{i}" for i in range(len(splits))]
     
     # Create embeddings and persist them
     #vectorstore = Chroma.from_documents(documents=splits, persist_directory=persist_dir, embedding=OpenAIEmbeddings(api_key=api_key))
@@ -44,14 +47,12 @@ def create_update_embeddings_for_user(docs, api_key, user_id):
     return "done"
 
 
-def create_retriever(user_id, api_key):
-    userRagEmbeddingsCollection = db[user_id]
-
-    vstore = MongoDBAtlasVectorSearch(
-        collection=userRagEmbeddingsCollection,
-        embedding=OpenAIEmbeddings(api_key=api_key),
-        index_name=ATLAS_VECTOR_SEARCH_INDEX_NAME,
-        relevance_score_fn="cosine"
+def create_retriever(api_key, reports_doc_list):
+    vstore = MongoDBAtlasVectorSearch.from_documents(
+    documents=reports_doc_list,
+    embedding=OpenAIEmbeddings(api_key=api_key, disallowed_special=()), 
+    collection=ragEmbeddingsCollection, 
+    index_name=ATLAS_VECTOR_SEARCH_INDEX_NAME
     )
 
     return vstore.as_retriever()

@@ -1,7 +1,8 @@
-from db import usersCollection, messageCollection, extractedDataCollection, reportsCollection
+from db import ragEmbeddingsCollection, extractedDataCollection, reportsCollection
 from datetime import datetime
 from core import chatActions, mental_prediction, big5_personality
 import pandas as pd
+import re
 
 POSSIBLE_SELECTIONS = {
     "Mental Health": mental_prediction,
@@ -44,6 +45,14 @@ def dict_to_string(d, explanations=None):
 
     return '\n'.join(result)
 
+def remove_stage_from_message(message):
+    pattern = r'CURRENT_STAGE:\s*\d+'
+
+    # Replace the CURRENT_STAGE part with an empty string
+    cleaned_message = re.sub(pattern, '', message)
+
+    return cleaned_message
+
 def get_input_format(selection):
     d = POSSIBLE_SELECTIONS[selection].MAPPINGS
     explanations = POSSIBLE_SELECTIONS[selection].EXPLANATIONS
@@ -76,12 +85,20 @@ def add_extracted_data_to_db(uid, session_id:str, data:dict):
     }
     extractedDataCollection.insert_one(document)
 
-def add_report_to_db(uid, session_id:str, report:str):
+def add_report_to_db(uid, session_type, session_id:str, report:str):
     document = {
         "uid":uid,
         "session_id":session_id,
+        "session_type":session_type,
         "report":report,
         "date":datetime.now(),
+        "saved" : False
     }
     reportsCollection.insert_one(document)
+
+def update_report_save_status(uid, session_id:str):
+    reportsCollection.find_one_and_update({"uid":uid, "session_id":session_id}, {"$set": {"saved": True}})
+
+def remove_embedded_data(session_id:str):
+    ragEmbeddingsCollection.delete_many({"session_id":session_id})
 

@@ -11,7 +11,7 @@ from openai import OpenAI
 from datetime import datetime
 
 
-from utils import dict_to_string, add_extracted_data_to_db, VERBOSITY_LEVEL
+from utils import dict_to_string, add_extracted_data_to_db, remove_stage_from_message, VERBOSITY_LEVEL
 from core.chatActions import add_chat_to_db, get_chat_from_db
 from config import OPENAI_API_KEY
 
@@ -83,14 +83,6 @@ def extract_stage_from_message(message):
     else:
         print("Error: No stage found in the input string.")
         return None
-
-def remove_stage_from_message(message):
-    pattern = r'CURRENT_STAGE:\s*\d+'
-
-    # Replace the CURRENT_STAGE part with an empty string
-    cleaned_message = re.sub(pattern, '', message)
-
-    return cleaned_message
 
 def MindWavebot(uid, session_id:str, message:str, system_template, verbosity=1):
     add_chat_to_db(uid, session_id, "user", message, {})
