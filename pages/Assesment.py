@@ -27,6 +27,7 @@ def MindWaveLab():
         st.write("Please click on the button below to generate your assessment report")
         if st.button("Generate Report"):
             st.spinner("Generating Report")
+            st.info("Please wait for the success message while we generate your report")
             df_d = utils.convert_dict_to_df(st.session_state['data_extracted'])
             prediction = utils.get_prediction(st.session_state["test_config"]["test_option"], df_d)
             print("prediction===", prediction)
