@@ -1,5 +1,4 @@
 from db import usersCollection, reportsCollection
-import json
 from bson import ObjectId
     
 def signup(signUp_det):

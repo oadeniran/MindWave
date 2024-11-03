@@ -1,10 +1,16 @@
-import os
-import random
+
 import streamlit as st
-from dotenv import load_dotenv
-from core import mental_prediction, userActions
-import uuid
-import utils
+
+@st.cache_resource
+def get_all_imports():
+    import os
+    from dotenv import load_dotenv
+    from core import userActions
+    import uuid
+    import utils
+    return os, load_dotenv, userActions, uuid, utils
+
+os, load_dotenv, userActions, uuid, utils = get_all_imports()
 
 load_dotenv()
 
@@ -84,26 +90,28 @@ def test_configurations():
 
 
 def about():
-    about_str = """##Inspiration
-The growing mental health crisis and the stigma associated with seeking help inspired us to create MindWave. We realized that many individuals avoid traditional mental health assessments because they feel too clinical or invasive. By leveraging Generative AI, we wanted to create a more engaging and comfortable way for people to share their mental health status, making it easier to detect potential issues early.
+    about_str = """
+    ## Inspiration
+    The growing mental health crisis and the stigma associated with seeking help inspired us to create MindWave. We realized that many individuals avoid traditional mental health assessments because they feel too clinical or invasive. By leveraging Generative AI, we wanted to create a more engaging and comfortable way for people to share their mental health status, making it easier to detect potential issues early.
 
-##What it does
-MindWave offers users an interactive and conversational experience through GenAI. The AI engages users in meaningful conversations, gently collecting information that could indicate their mental health status. The data collected is processed using traditional machine learning models, which predict the user's mental state based on patterns and insights extracted from the interaction.
+    ## What it does
+    MindWave offers users an interactive and conversational experience through GenAI. The AI engages users in meaningful conversations, gently collecting information that could indicate their mental health status. The data collected is processed using traditional machine learning models, which predict the user's mental state based on patterns and insights extracted from the interaction.
 
-##How we built it
-We combined the power of Generative AI with machine learning techniques. For the conversational aspect, we trained a custom model using various NLP techniques to make the interaction as natural and engaging as possible. The backend uses traditional ML models such as gradient boosting to analyze the gathered data and make mental health predictions. We also integrated secure data handling protocols to ensure user privacy and data protection.
+    ## How we built it
+    We combined the power of Generative AI with machine learning techniques. For the conversational aspect, we trained a custom model using various NLP techniques to make the interaction as natural and engaging as possible. The backend uses traditional ML models such as gradient boosting to analyze the gathered data and make mental health predictions. We also integrated secure data handling protocols to ensure user privacy and data protection.
 
-##Challenges we ran into
-One of the key challenges was ensuring that the AI could collect relevant data without sounding too invasive or clinical. Balancing sensitivity and accuracy in the machine learning models was another hurdle, as we had to fine-tune them to avoid overgeneralizing or underestimating the user's mental health status. Additionally, ensuring data privacy and securing sensitive information was paramount, which required extensive testing.
+    ## Challenges we ran into
+    One of the key challenges was ensuring that the AI could collect relevant data without sounding too invasive or clinical. Balancing sensitivity and accuracy in the machine learning models was another hurdle, as we had to fine-tune them to avoid overgeneralizing or underestimating the user's mental health status. Additionally, ensuring data privacy and securing sensitive information was paramount, which required extensive testing.
 
-##Accomplishments that we're proud of
-We’re proud of creating a solution that has the potential to democratize access to mental health assessments. MindWave engages users in a way that feels natural, reducing the discomfort often associated with mental health checks. Successfully integrating GenAI with traditional machine learning in this context was a significant achievement, as was building the platform with user privacy in mind.
+    ## Accomplishments that we're proud of
+    We’re proud of creating a solution that has the potential to democratize access to mental health assessments. MindWave engages users in a way that feels natural, reducing the discomfort often associated with mental health checks. Successfully integrating GenAI with traditional machine learning in this context was a significant achievement, as was building the platform with user privacy in mind.
 
-##What we learned
-We learned a lot about the intersection of AI and mental health. Developing this project deepened our understanding of how AI can be used responsibly to support mental well-being. We also gained insights into building conversational AI that maintains a balance between engagement and sensitivity, along with the complexities of data security in handling sensitive health information.
+    ## What we learned
+    We learned a lot about the intersection of AI and mental health. Developing this project deepened our understanding of how AI can be used responsibly to support mental well-being. We also gained insights into building conversational AI that maintains a balance between engagement and sensitivity, along with the complexities of data security in handling sensitive health information.
 
-##What's next for MindWave
-Moving forward, we plan to refine the AI’s conversational abilities, making it even more adept at detecting subtle mental health signals. We also aim to expand the mental health models to cover a broader range of mental health conditions. Additionally, we’re exploring partnerships with mental health professionals to validate our predictions and further improve the accuracy of the platform."""
+    ## What's next for MindWave
+    Moving forward, we plan to refine the AI’s conversational abilities, making it even more adept at detecting subtle mental health signals. We also aim to expand the mental health models to cover a broader range of mental health conditions. Additionally, we’re exploring partnerships with mental health professionals to validate our predictions and further improve the accuracy of the platform.
+    """
     st.markdown(about_str)
 
 
