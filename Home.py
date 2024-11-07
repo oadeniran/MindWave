@@ -66,7 +66,7 @@ def auth():
     elif selection == "SignUp":
         st.info("Please enter your details to sign up.")
         username = st.text_input("username", help="Please enter your username", key="signupusername")
-        st.write("Please enter your password")
+        st.write("Please enter your password. Password is encrypted by bycrpt before storing in the database for security")
         password = st.text_input("Password", type="password", key="signuppassword")
         if st.button("Sign Up"):
             resp = userActions.signup({"username": username, "password": password, "sessions": []})
