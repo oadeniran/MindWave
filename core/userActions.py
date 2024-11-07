@@ -1,9 +1,16 @@
 from db import usersCollection, reportsCollection
 from bson import ObjectId
+import bcrypt
+
+def encrypt_password(password):
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+def check_password(password, hashed):
+    return bcrypt.checkpw(password.encode('utf-8'), hashed)
     
 def signup(signUp_det):
     try:
-        details = usersCollection.find_one({"email" : signUp_det["email"]})
+        details = usersCollection.find_one({"username" : signUp_det["username"]})
     except:
         return {
                     "message" : "Error in signup, please try again",
@@ -14,19 +21,22 @@ def signup(signUp_det):
                     "message" : "Username is taken, please use another",
                     "status_code" : 400}
     try:
-        usersCollection.insert_one(signUp_det)
-    except:
+        signUp_det["password"] = encrypt_password(signUp_det["password"])
+        uid = usersCollection.insert_one(signUp_det)
+    except Exception as e:
+        print(e)
         return {
                     "message" : "Error with signup",
                     "status_code" : 400}
     return {
     "message" : "Sign Up successful",
+    "uid" : str(uid.inserted_id),
     "status_code" : 200}
 
 def login(login_det):
 
     try:
-        details = usersCollection.find_one({"email" : login_det["email"]})
+        details = usersCollection.find_one({"username" : login_det["username"]})
     except:
         return {
                     "message" : "Error with DB",
@@ -35,7 +45,7 @@ def login(login_det):
     
     if details:
         print(str(details["_id"]))
-        if details["password"] == login_det["password"]:
+        if check_password(login_det["password"], details["password"]):
             return {
                     "message" : "Sign In successful",
                     "status_code" : 200,

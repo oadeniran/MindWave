@@ -50,12 +50,12 @@ def auth():
     selection = st.sidebar.radio("Go to", ["SignIn", "SignUp"])
 
     if selection == "SignIn":
-        st.info("Please enter your username and password to login.")
-        email = st.text_input("Email", help="Please enter your email")
-        st.write("Please enter your password")
+        st.info("Please enter your username and password to login. Select Signup on the left sidebar to create an account")
+        username = st.text_input("username", help="Please enter your username", key="loginusername")
+        st.write("Please enter your password", key="loginpassword")
         password = st.text_input("Password", type="password")
         if st.button("Login"):
-            resp = userActions.login({"email": email, "password": password})
+            resp = userActions.login({"username": username, "password": password})
             if resp["status_code"] == 200:
                 st.info("Loggin In....Wait for success message!")
                 st.session_state["uid"] = resp["uid"]
@@ -65,15 +65,16 @@ def auth():
                 st.error(resp["message"])
     elif selection == "SignUp":
         st.info("Please enter your details to sign up.")
-        email = st.text_input("Email")
+        username = st.text_input("username", help="Please enter your username", key="signupusername")
         st.write("Please enter your password")
-        password = st.text_input("Password", type="password")
+        password = st.text_input("Password", type="password", key="signuppassword")
         if st.button("Sign Up"):
-            resp = userActions.signup({"email": email, "password": password, "sessions": []})
+            resp = userActions.signup({"username": username, "password": password, "sessions": []})
             if resp["status_code"] == 200:
                 st.info("Signing Up....Wait for success message!")
                 st.success(resp["message"])
-                st.info("Now you can login with your details")
+                st.session_state["uid"] = resp["uid"]
+                st.info("Now you can start your test configuration or talk to me")
             else:  
                 st.error(resp["message"])
 
