@@ -8,9 +8,10 @@ def get_all_imports():
     from core import userActions
     import uuid
     import utils
-    return os, load_dotenv, userActions, uuid, utils
+    import random
+    return os, load_dotenv, userActions, uuid, utils, random
 
-os, load_dotenv, userActions, uuid, utils = get_all_imports()
+os, load_dotenv, userActions, uuid, utils, random = get_all_imports()
 
 load_dotenv()
 
@@ -57,8 +58,9 @@ def auth():
             resp = userActions.login({"email": email, "password": password})
             if resp["status_code"] == 200:
                 st.info("Loggin In....Wait for success message!")
-                st.success(resp["message"])
                 st.session_state["uid"] = resp["uid"]
+                st.success(resp["message"])
+                st.info("Now you can start your test configuration or talk to me")
             else:
                 st.error(resp["message"])
     elif selection == "SignUp":
@@ -71,6 +73,7 @@ def auth():
             if resp["status_code"] == 200:
                 st.info("Signing Up....Wait for success message!")
                 st.success(resp["message"])
+                st.info("Now you can login with your details")
             else:  
                 st.error(resp["message"])
 
@@ -79,7 +82,7 @@ def test_configurations():
 
     st.write("Please select the test configuration you want me to evaluate you on")
 
-    test_option = st.selectbox("Test Options", ["Mental Health","Personality Test"])
+    test_option = st.selectbox("Test Options", ["Personality Test", "Mental Health"])
 
     verbosity = st.slider("Verbosity and Expressiveness", min_value=1, max_value=3, value=2)
 
