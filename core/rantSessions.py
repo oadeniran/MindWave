@@ -19,8 +19,8 @@ def get_chat_history_for_ai(uid, session_id):
 
         return new_messages
 
-def get_reports_doc_list(reports):
-    return rag.create_docs(reports)
+def get_reports_doc_list(reports, session_id):
+    return rag.create_docs(reports, session_id)
 
 def save_session_embeddings(text, user_id, api_key):
     docs = rag.create_docs(text)

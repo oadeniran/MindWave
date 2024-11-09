@@ -16,7 +16,7 @@ random, message, chatbot, utils, OPENAI_API_KEY = get_all_imports()
 def MindWaveLab():
     output = None
     if 'test_config' not in st.session_state:
-        st.info("Please select the test configuration you want me to evaluate you on")
+        st.info("Please select the test configuration you want me to evaluate you on. You can find the test configuration in the sidebar of the homepage, below the Authentication section")
     elif 'assessment_report' in st.session_state:
         st.info("Seems you have completed your assessment, please proceed to the assessment report. To start a new assessment, please click on the button below")
         if st.button("Start New Assessment"):

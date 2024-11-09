@@ -45,6 +45,10 @@ def auth():
     st.title('Authentication')
     st.write("Authenticatication enables me save your history and provide you with a better experience.")
 
+    if "uid" in st.session_state and st.session_state["uid"] != "":
+        st.info("You are already logged in. You can start your test configuration or talk to me")
+        return
+
     st.sidebar.title("Options")
 
     selection = st.sidebar.radio("Go to", ["SignIn", "SignUp"])
@@ -52,7 +56,7 @@ def auth():
     if selection == "SignIn":
         st.info("Please enter your username and password to login. Select Signup on the left sidebar to create an account")
         username = st.text_input("username", help="Please enter your username", key="loginusername")
-        st.write("Please enter your password", key="loginpassword")
+        st.write("Please enter your password")
         password = st.text_input("Password", type="password")
         if st.button("Login"):
             resp = userActions.login({"username": username, "password": password})

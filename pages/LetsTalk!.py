@@ -27,7 +27,7 @@ else:
         st.session_state['rant_session'] = {
             'past': [],
             'generated': [],
-            'reports_doc_list': rantSessions.get_reports_doc_list(userActions.get_user_reports(st.session_state["uid"]))
+            'reports_doc_list': rantSessions.get_reports_doc_list(userActions.get_user_reports(st.session_state["uid"]), st.session_state['session_id'])
         }
     st.title("HI, Let's Talk!")
     placeholder = st.empty()

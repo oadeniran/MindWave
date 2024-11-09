@@ -10,12 +10,12 @@ from db import ragEmbeddingsCollection,db
 
 ATLAS_VECTOR_SEARCH_INDEX_NAME = "langchain-index-vectorstores"
 
-def create_docs(reports):
+def create_docs(reports, curr_session_id):
     docs = []
     for session_id, report_details in reports.items():
         doc = Document(
             page_content=report_details[1],
-            metadata={"session_id": session_id, "session_type": report_details[0]}
+            metadata={"session_id": session_id, "session_type": report_details[0], "current_session_id": curr_session_id}
         )
         docs.append(doc)
     return docs
@@ -46,6 +46,13 @@ def create_update_embeddings_for_user(docs, api_key, user_id):
 
 
 def create_retriever(api_key, reports_doc_list):
+    if len(reports_doc_list) == 0:
+        return MongoDBAtlasVectorSearch(
+            collection=ragEmbeddingsCollection,
+            embedding=OpenAIEmbeddings(api_key=api_key),
+            index_name=ATLAS_VECTOR_SEARCH_INDEX_NAME,
+            relevance_score_fn="cosine"
+        ).as_retriever()
     vstore = MongoDBAtlasVectorSearch.from_documents(
     documents=reports_doc_list,
     embedding=OpenAIEmbeddings(api_key=api_key, disallowed_special=()), 

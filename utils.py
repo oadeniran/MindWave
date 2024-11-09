@@ -100,5 +100,7 @@ def update_report_save_status(uid, session_id:str):
     reportsCollection.find_one_and_update({"uid":uid, "session_id":session_id}, {"$set": {"saved": True}})
 
 def remove_embedded_data(session_id:str):
-    ragEmbeddingsCollection.delete_many({"session_id":session_id})
+    print("Removing embedded data for session_id:", session_id)
+    ragEmbeddingsCollection.delete_many({"current_session_id":session_id})
+    print("Removed embedded data for session_id:", session_id)
 
