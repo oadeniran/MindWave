@@ -12,6 +12,8 @@ ATLAS_VECTOR_SEARCH_INDEX_NAME = "langchain-index-vectorstores"
 
 def create_docs(reports, curr_session_id):
     docs = []
+    if len(reports) == 0:
+        return docs
     for session_id, report_details in reports.items():
         doc = Document(
             page_content=report_details[1],
@@ -23,7 +25,8 @@ def create_docs(reports, curr_session_id):
 def create_update_embeddings_for_user(docs, api_key, user_id):
 
     userRagEmbeddingsCollection = db[user_id]
-    ids = [user_id + f"_{i}" for i in range(len(docs))]
+    if len(docs) > 0:
+        ids = [user_id + f"_{i}" for i in range(len(docs))]
     
     # Split documents
     #text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
@@ -38,7 +41,9 @@ def create_update_embeddings_for_user(docs, api_key, user_id):
             index_name=ATLAS_VECTOR_SEARCH_INDEX_NAME,
             relevance_score_fn="cosine"
         )
-    vectorstore.add_documents(documents=docs, ids=ids)
+    
+    if len(docs) > 0:
+        vectorstore.add_documents(documents=docs, ids=ids)
 
     vectorstore.create_vector_search_index(dimensions=1536)
     

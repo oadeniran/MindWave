@@ -47,6 +47,8 @@ def show_reports(all_r):
 
 if 'uid' not in st.session_state:
     st.info("Please sign up/ login to continue")
+elif 'demo' in st.session_state["uid"]:
+    st.info("No history available for demo mode")
 else:
     if 'userSessions' not in st.session_state:
         st.session_state['userSessions'] = userActions.get_all_user_sessions(st.session_state["uid"])

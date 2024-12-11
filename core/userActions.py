@@ -114,6 +114,8 @@ def get_user_reports(uid):
                     "message" : "Error with DB",
                     "status_code" : 404
                     }
+    if reports == None:
+        return {}
     reports_formatted = {report['session_id']: (report['session_type'], report['report'], report["saved"]) for report in reports}
     #print(reports_formatted)
     return reports_formatted

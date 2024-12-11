@@ -1,4 +1,6 @@
 import streamlit as st
+from core import userActions
+import uuid
 
 @st.cache_resource
 def get_all_imports():
@@ -16,7 +18,29 @@ random, message, chatbot, utils, OPENAI_API_KEY = get_all_imports()
 def MindWaveLab():
     output = None
     if 'test_config' not in st.session_state:
-        st.info("Please select the test configuration you want me to evaluate you on. You can find the test configuration in the sidebar of the homepage, below the Authentication section")
+        st.info("Please select the test configuration you want me to evaluate you on")
+        test_option = st.selectbox("Test Options", ["Personality Test", "Mental Health"])
+
+        verbosity = st.slider("Verbosity and Expressiveness", min_value=1, max_value=3, value=2)
+
+        if st.button("Start Assesment"):
+            if "uid" not in st.session_state:
+                st.session_state["uid"] = ""
+            st.session_state["test_option"] = test_option
+            input_info = utils.get_input_format(test_option)
+            output_info = utils.get_output_format(test_option)
+            st.session_state["test_config"] = {
+                "uid" : st.session_state["uid"],
+                "session_id" : str(uuid.uuid4()),
+                "test_option" : test_option,
+                "verbosity" : verbosity,
+                "input_info" : input_info,
+                "output_info" : output_info,
+                "system_template" : utils.get_system_template(test_option,output_info, input_info, verbosity)
+            }
+            userActions.add_user_session(st.session_state["uid"], st.session_state["test_config"]["session_id"], test_option,st.session_state["test_config"])
+            st.info("Great!!! Let's get started")
+            st.rerun()
     elif 'assessment_report' in st.session_state:
         st.info("Seems you have completed your assessment, please proceed to the assessment report. To start a new assessment, please click on the button below")
         if st.button("Start New Assessment"):

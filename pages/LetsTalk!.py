@@ -15,7 +15,10 @@ random, message, rantSessions, userActions, utils, uuid, OPENAI_API_KEY = get_al
 
 
 if 'uid' not in st.session_state or st.session_state["uid"] == "":
-    st.info("Please sign up/ login to continue")
+    #st.info("Please sign up/ login to continue")
+    st.session_state["uid"] = str(uuid.uuid4())+'-demo' # for demo purposes
+    st.info("You are in demo mode. Your session will not be saved")
+    st.rerun()
 else:
     if "input_message_key" not in st.session_state:
             st.session_state["input_message_key"] = str(random.random())
